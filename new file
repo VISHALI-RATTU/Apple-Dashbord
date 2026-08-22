@@ -1,0 +1,1162 @@
+<!-- Yes. I found the main error in your file. The `with tab3:` for **Advanced Charts** is incorrectly outside the `Visualizations` section, so when you open **About**, Streamlit can throw `NameError: name 'tab3' is not defined`. 
+
+I fixed:
+
+* ✅ `with tab3:` indentation
+* ✅ Removed the unnecessary `Dashboard` block that could reference an undefined `fig`
+* ✅ Kept your **About page with 5 tabs**
+* ✅ Kept your existing dashboard structure
+
+**Download the corrected file:**
+
+[📥 Download app_fixed.py](sandbox:/mnt/data/app_fixed.py)
+
+Replace your old `app(2).py` with this corrected file and run:
+
+```bash
+streamlit run app_fixed.py
+```
+
+Your About section is already structured correctly with **Overview, Dataset, Features, Methodology, and Insights** tabs.  -->
+
+import pandas as pd
+import numpy as np
+import streamlit as st
+import plotly.express as px
+from streamlit_option_menu import option_menu
+
+
+
+df=pd.read_csv("apple_products_pricing_2020_2026.csv")
+
+st.set_page_config(
+    page_title="Apple product pricing dashbord",page_icon="🍎",layout="wide"
+
+)
+st.markdown("""
+<style>
+
+/* KPI Cards */
+.kpi-card{
+    background-color:#1f2937;
+    padding:20px;
+    border-radius:15px;
+    border-left:6px solid #3b82f6;
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.kpi-title{
+    color:#d1d5db;
+    font-size:16px;
+    font-weight:600;
+}
+
+.kpi-value{
+    color:white;
+    font-size:32px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+/* Section Headings */
+.section-box{
+    background-color:#1f2937;
+    padding:16px;
+    border-radius:12px;
+    border-left:5px solid #10b981;
+    margin-top:20px;
+    margin-bottom:15px;
+}
+
+.section-title{
+    color:#10b981;
+    font-size:20px;
+    font-weight:bold;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+with st.sidebar:
+    st.title("🍎 Apple product Dashboard")
+    st.markdown("---")
+     
+    page = option_menu(
+        menu_title="Navigation",
+        options=["Home","Data Explorer","Pre-Processing","Visualizations","About"],icons=["house-fill","table","gear","bar-chart-fill","info-circle-fill"],
+menu_icon="mortarboard-fill",
+        default_index=0,
+    )    
+    st.markdown("---")
+    st.caption("Made with ❤️ using Streamlit")
+
+# if page == "Home":
+
+#     st.title("🍎 Apple Products Pricing Dashboard (2020–2026)")
+
+#     st.markdown("""
+#     ### Welcome
+#     This interactive dashboard provides insights into Apple product pricing from *2020 to 2026*.
+#     It includes:
+#     - 📊 Data Exploration
+#     - 🧹 Data Preprocessing
+#     - 📈 Interactive Visualizations
+#     - 💡 Business Insights
+#     """)
+
+#     col1, col2, col3, col4 = st.columns(4)
+
+#     col1.metric("📱 Total Products", len(df))
+#     col2.metric("📂 Categories", df["Product_Category"].nunique())
+#     col3.metric("💲Average Price (USD)", f"${df['Current_Price_USD'].mean():.2f}")
+#     col4.metric("⭐ Average Rating", f"{df['Rating'].mean():.2f}")
+
+if page == "Home":
+
+    st.title("🍎 Apple Products Pricing Dashboard (2020–2026)")
+
+    tab1, tab2, tab3 = st.tabs([
+        "🏠 Overview",
+        "📊 Key Metrics",
+        "💡 Insights"
+    ])
+
+    # TAB 1 — Overview
+    with tab1:
+        st.markdown("""
+        ### Welcome 👋
+
+        This interactive dashboard provides insights into Apple product
+        pricing from **2020 to 2026**.
+
+        ### Dashboard Features
+        - 📊 Data Exploration
+        - 🧹 Data Preprocessing
+        - 📈 Interactive Visualizations
+        - 💡 Business Insights
+        """)
+
+    # TAB 2 — Key Metrics
+    with tab2:
+        st.subheader("📊 Key Metrics")
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        col1.metric(
+            "📱 Total Products",
+            len(df)
+        )
+
+        col2.metric(
+            "📂 Categories",
+            df["Product_Category"].nunique()
+        )
+
+        col3.metric(
+            "💲 Average Price (USD)",
+            f"${df['Current_Price_USD'].mean():.2f}"
+        )
+
+        col4.metric(
+            "⭐ Average Rating",
+            f"{df['Rating'].mean():.2f}"
+        )
+
+    # TAB 3 — Insights
+    with tab3:
+        st.subheader("💡 Business Insights")
+
+        st.markdown("""
+        ### Key Insights
+
+        - 📱 **Product Variety:** The dataset contains multiple Apple product categories.
+        - 💰 **Pricing:** Average current prices provide an overview of Apple's pricing range.
+        - ⭐ **Customer Rating:** Ratings help understand customer satisfaction.
+        - 📈 **Price Analysis:** Product prices can be compared across categories and years.
+        - 🛍️ **Category Analysis:** Different product categories can be explored to identify pricing trends.
+        """
+
+        )
+
+elif page == "Data Explorer":
+    st.title("Data Explorer")
+    st.title("📋 Data Explorer")
+
+    st.subheader("🔍 Explore Dataset")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        Category_filter = st.selectbox(
+            "Select Product_Category",
+            ["All"] + sorted(df["Product_Category"].unique().tolist())
+        )
+
+    with col2:
+         Category_filter= st.selectbox(
+            "Select Platform",
+            ["All"] + sorted(df["Platform"].unique().tolist())
+        )
+
+    df = df.copy()
+
+    if Category_filter != "All":
+        df = df[df[""] == "Product_Category"]
+
+    if Category_filter != "All":
+        df = df[df[""] == "Product_Category"]
+
+    # if Category_filter != "Flipkart":
+    #         df = df[df[""] == "Product_Category"]
+
+    st.markdown("""
+    <div class="section-box">
+        <div class="section-title">📄 Dataset Preview</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.dataframe(df, use_container_width=True)
+
+    st.markdown("""
+    <div class="section-box">
+        <div class="section-title">🍎 Apple Products Dataset</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-title">📄 Total Rows</div>
+            <div class="kpi-value">{df.shape[0]}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown(f"""
+        <div class="kpi-card">
+            <div class="kpi-title">📑 Total Columns</div>
+            <div class="kpi-value">{df.shape[1]}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
+    st.markdown("""
+    <div class="section-box">
+        <div class="section-title">❗ Missing Values</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.dataframe(df.isnull().sum().reset_index().rename(
+        columns={"index":"Column",0:"Missing Values"}),
+        use_container_width=True
+    )
+
+    st.markdown("""
+    <div class="section-box">
+        <div class="section-title">📑 Data Types</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.dataframe(df.dtypes.reset_index().rename(
+        columns={"index":"Column",0:"Data Type"}),
+        use_container_width=True
+    )
+
+
+# elif page == "Pre-Processing":
+
+#     st.title("🧹 Data Preprocessing")
+#     st.subheader("Original Dataset")
+#     st.dataframe(df)
+
+#     # Create cleaned dataset
+#     clean_df =pd.read_csv('Cleaned_dataset.csv')
+
+#     # Remove duplicate rows
+#     clean_df = clean_df.drop_duplicates()
+
+#     # Remove missing values
+#     clean_df = clean_df.dropna()
+
+#     # Convert Date column (if available)
+#     if "Date" in clean_df.columns:
+#         clean_df["Date"] = pd.to_datetime(clean_df["Date"], errors="coerce")
+
+#     # Convert numeric columns
+#     numeric_cols = [
+#         "Current_Price_INR",
+#         "Launch_Price_USD",
+#         "Rating",
+#         "Reviews_Count"
+#     ]
+
+#     for col in numeric_cols:
+#         if col in clean_df.columns:
+#             clean_df[col] = pd.to_numeric(clean_df[col], errors="coerce")
+
+#     # Remove rows with invalid values
+#     clean_df = clean_df.dropna()
+
+#     # Show cleaned dataset
+#     st.subheader("Cleaned Dataset")
+#     st.dataframe(clean_df)
+
+#     # Dataset information
+#     st.subheader("Dataset Information")
+#     st.write("Rows:", clean_df.shape[0])
+#     st.write("Columns:", clean_df.shape[1])
+
+#     # Missing values
+#     st.subheader("Missing Values")
+#     st.dataframe(clean_df.isnull().sum().reset_index().rename(
+#         columns={"index":"Column",0:"Missing Values"}
+#     ))
+
+#     # Download cleaned dataset
+#     csv = clean_df.to_csv(index=False).encode("utf-8")
+
+#     st.download_button(
+#         "Download Cleaned Dataset",
+#         data=csv,
+#         file_name="cleaned_dataset.csv",
+#         mime="text/csv"
+#     )
+elif page == "Pre-Processing":
+
+    st.title("🧹 Data Preprocessing")
+
+    # Create 3 tabs
+    tab1, tab2, tab3 = st.tabs([
+        "🗂️ Original Data",
+        "🧹 Cleaned Data",
+        "📥 Download & Summary"
+    ])
+
+    # =====================================================
+    # TAB 1 — ORIGINAL DATA
+    # =====================================================
+    with tab1:
+
+        st.subheader("📋 Original Dataset")
+
+        st.dataframe(
+            df,
+            use_container_width=True
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "📄 Original Rows",
+                df.shape[0]
+            )
+
+        with col2:
+            st.metric(
+                "📑 Original Columns",
+                df.shape[1]
+            )
+
+    # =====================================================
+    # TAB 2 — CLEANED DATA
+    # =====================================================
+    with tab2:
+
+        st.subheader("🧹 Cleaned Dataset")
+
+        # Load dataset
+        clean_df = pd.read_csv("Cleaned_dataset.csv")
+
+        # Remove duplicate rows
+        clean_df = clean_df.drop_duplicates()
+
+        # Convert Date column
+        if "Date" in clean_df.columns:
+            clean_df["Date"] = pd.to_datetime(
+                clean_df["Date"],
+                errors="coerce"
+            )
+
+        # Convert numeric columns
+        numeric_cols = [
+            "Current_Price_INR",
+            "Launch_Price_USD",
+            "Rating",
+            "Reviews_Count"
+        ]
+
+        for col in numeric_cols:
+            if col in clean_df.columns:
+                clean_df[col] = pd.to_numeric(
+                    clean_df[col],
+                    errors="coerce"
+                )
+
+        # Remove missing values
+        clean_df = clean_df.dropna()
+
+        # Display cleaned data
+        st.dataframe(
+            clean_df,
+            use_container_width=True
+        )
+
+        # Dataset information
+        st.subheader("📊 Dataset Information")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                "📄 Total Rows",
+                clean_df.shape[0]
+            )
+
+        with col2:
+            st.metric(
+                "📑 Total Columns",
+                clean_df.shape[1]
+            )
+
+    # =====================================================
+    # TAB 3 — SUMMARY & DOWNLOAD
+    # =====================================================
+    with tab3:
+
+        st.subheader("❗ Missing Values")
+
+        missing_values = (
+            clean_df.isnull()
+            .sum()
+            .reset_index()
+            .rename(
+                columns={
+                    "index": "Column",
+                    0: "Missing Values"
+                }
+            )
+        )
+
+        st.dataframe(
+            missing_values,
+            use_container_width=True
+        )
+
+        st.subheader("🔤 Data Types")
+
+        data_types = (
+            clean_df.dtypes
+            .reset_index()
+            .rename(
+                columns={
+                    "index": "Column",
+                    0: "Data Type"
+                }
+            )
+        )
+
+        st.dataframe(
+            data_types,
+            use_container_width=True
+        )
+
+        # Download cleaned dataset
+        csv = clean_df.to_csv(
+            index=False
+        ).encode("utf-8")
+
+        st.download_button(
+            label="📥 Download Cleaned Dataset",
+            data=csv,
+            file_name="cleaned_dataset.csv",
+            mime="text/csv"
+        )
+
+
+elif page == "Visualizations":
+    df= pd.read_csv('Cleaned_dataset.csv')
+    # Your chart code
+    st.title("visualisation")
+    st.markdown("""
+### Apple Products Pricing Dashboard (2020–2026)
+
+This section shows interactive visualizations of the Apple Products Pricing dataset.
+Use the charts below to analyze product categories, prices, ratings, and trends.
+""")
+    tab1, tab2, tab3 = st.tabs([
+        "📊 Basic Charts",
+        "📈 Trend Analysis",
+        "🚀 Advanced Charts"
+    ])
+
+    with tab1:
+                st.subheader("📊 Basic Charts")
+
+    col1, col2 = st.columns(2)
+    with col1:
+                    st.subheader("distribution of product category")
+                    # data=df['Platform'].value_counts().reset_index()
+    data1=df.groupby('Product_Category').size()
+    print(data1)
+    fig=px.bar(
+        data1,
+        x = data1.index,
+        y=data1.values,
+        color = data1.index
+
+    )
+    st.plotly_chart(fig,use_container_width=True)
+        
+
+    with col2:
+        st.subheader("product category distribution")
+        category_count = df.groupby("Product_Category").size().reset_index(name="Count")
+
+    # Create Pie Chart
+    fig = px.pie(
+        category_count,
+        names="Product_Category",
+        values="Count",
+        title="product category distribution",
+        hole=0.4   # Creates a donut chart (optional)
+    )
+
+    # Improve the layout
+    fig.update_layout(
+        template="plotly_white",
+        title_x=0.5,
+        legend_title="Product Category"
+    )
+
+    # Show values and percentages
+    fig.update_traces(
+        textinfo="percent+label"
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+
+    col3,col4=st.columns(2)
+    with col3:
+        st.subheader("Launch price spread across product category")
+        fig=px.box(
+    df,
+    x="Product_Category",
+    y="Launch_Price_USD",
+    color="Product_Category",
+    # color_discrete_sequence=['red','blue','green',"yellow"],
+    title="Launch price spread across product category",
+    points="outliers"
+    )
+        
+    fig.update_traces(
+        marker_size=1
+    )
+
+    st.plotly_chart(fig,use_container_width=True)
+
+    with col4:
+        st.subheader("Violin Plot of discount_pct")
+        fig = px.violin(df, x='Sale_Event',y='Discount_Pct',
+            box=True,
+            color="Product_Category",
+            )
+    fig.update_layout(
+        title_x=0.5,
+        font=dict(size=14),
+        title="Violin Plot of discount_pct",
+        template="ggplot2")
+    fig.update_traces(
+        meanline_visible=True
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+    col5, col6 = st.columns(2)
+
+    with col5:
+        st.subheader("Distribution of Current_Price_USD")
+        fig= px.histogram(df,
+                x='Current_Price_USD',
+                color='Product_Category',nbins=40,
+                marginal="box",
+                opacity=0.75,
+                title='Distribution of Current_Price_USD',
+
+                )
+    fig.update_layout(
+        title_x=0.5,
+        xaxis_title='Current_Price_USD',
+        yaxis_title='Freq',
+        bargap=0.05,
+        font=dict(size=14)
+
+    )
+    fig.update_traces(
+        marker_line_color="black",
+        marker_line_width= 1
+
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+    with col6:
+        st.subheader(" yearly Distribution of Current_Price_USD")
+        data = df.groupby('Platform')['Discount_Pct'].mean().reset_index()
+    data = data.sort_values('Discount_Pct', ascending=False)
+
+    fig = px.bar(
+        data,
+        x='Platform',
+        y='Discount_Pct',
+        color='Platform',
+        text=data['Discount_Pct'].round(1).astype(str) + '%',
+        color_discrete_sequence=px.colors.qualitative.Set2,
+        title='Average Discount % by Platform',
+        labels={'Discount_Pct': 'Avg Discount (%)', 'Platform': 'Platform'}
+    )
+
+    fig.update_traces(
+        textposition='outside',
+        marker_line_color='black',
+        marker_line_width=0.8
+    )
+
+    fig.update_layout(
+        template='plotly_white',
+        showlegend=False,
+        title_x=0.5,
+        yaxis=dict(title='Average Discount (%)', ticksuffix='%'),
+        xaxis=dict(title=None),
+        bargap=0.3,
+        font=dict(size=13)
+    )
+    
+    st.plotly_chart(fig,use_container_width=True)
+
+    with tab2:
+                st.subheader("📈 Trend Analysis")
+    col1, col2 = st.columns(2)
+    with col1:
+            st.subheader(" Yearly current price by Product category")
+            data = df.groupby(['year','Product_Category'])['Current_Price_USD'].mean().reset_index()
+            fig=px.line(data,
+                x='year',
+                y='Current_Price_USD',
+                color='Product_Category',
+                # markers=True,
+                title= 'Yearly current price by Product category'
+
+            )
+            fig.update_layout(
+                xaxis_title='month',
+                yaxis_title='Average current price(USD)',
+                template='plotly_white'
+            )
+            st.plotly_chart(fig,use_container_width=True)
+
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    with col2:
+        st.subheader("Historical Lifecycle Volume of Product Conditions")
+        area_data = (
+        df.groupby([df["Date"].dt.to_period("M"), "Condition"])
+        .size()
+        .unstack(fill_value=0)
+    )
+
+    # Convert PeriodIndex back to Timestamp
+    area_data.index = area_data.index.to_timestamp()
+
+    # Reset index for Plotly
+    area_data = area_data.reset_index()
+
+    # Convert wide format to long format
+    area_long = area_data.melt(
+        id_vars="Date",
+        var_name="Condition",
+        value_name="Count"
+    )
+
+    # Create Stacked Area Chart
+    fig = px.area(
+        area_long,
+        x="Date",
+        y="Count",
+        color="Condition",
+        title="Historical Lifecycle Volume of Product Conditions",
+        labels={
+            "Date": "Date",
+            "Count": "Number of Products",
+            "Condition": "Product Condition"
+        }
+    )
+
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Product Count",
+        template="plotly_white"
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+    col3, col4 = st.columns(2)
+    with col3:
+        st.subheader("Price Decay Lifecycle of iPhone 13 Pro (128GB0)")
+        model_df = (
+        df.query("Model_Name == 'iPhone 13 Pro (128GB)'")
+        .sort_values("Date")
+    )
+
+    # Create Step-Line Chart
+    fig = px.line(
+        model_df,
+        x="Date",
+        y="Current_Price_INR",
+        title="Price Decay Lifecycle of iPhone 13 Pro (128GB0)",
+        markers=True
+    )
+
+    # Convert line to step-line
+    fig.update_traces(
+        line_shape="hv",   # Step line (horizontal-vertical)
+        line=dict(width=3)
+    )
+
+    # Customize layout
+    fig.update_layout(
+        xaxis_title="Date",
+        yaxis_title="Current Price (INR)",
+        template="plotly_white",
+        hovermode="x unified"
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+    with col4:
+        st.subheader("Inventory Liquidation Risk Profile")
+
+    stacked_data = (
+        df.groupby(['Product_Category', 'Stock_Status'])
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+
+    # Convert to long format for Plotly
+    stacked_data = stacked_data.melt(
+        id_vars='Product_Category',
+        var_name='Stock_Status',
+        value_name='Count'
+    )
+
+    # Create Stacked Column Chart
+    fig = px.bar(
+        stacked_data,
+        x='Product_Category',
+        y='Count',
+        color='Stock_Status',
+        title='Inventory Liquidation Risk Profile',
+        labels={
+            'Product_Category': 'Product Category',
+            'Count': 'Number of Products',
+            'Stock_Status': 'Stock Status'
+        }
+    )
+
+    # Stack the bars
+    fig.update_layout(
+        barmode='stack',
+        xaxis_title='Product Category',
+        yaxis_title='Number of Products',
+        legend_title='Stock Status',
+        template='plotly_white'
+    )
+    st.plotly_chart(fig,use_container_width=True)
+
+
+
+    col5, col6 = st.columns(2)
+    with col5:
+                st.subheader("Platform Representation of Specific Hardware Tiers")
+                grouped_data = (
+        df.groupby(['Platform', 'Condition'])
+        .size()
+        .reset_index(name='Count')
+    )
+
+    # Create Side-by-Side Bar Chart
+    fig = px.bar(
+        grouped_data,
+        x='Platform',
+        y='Count',
+        color='Condition',
+        barmode='group',
+        title='Platform Representation of Specific Hardware Tiers',
+        labels={
+            'Platform': 'Platform',
+            'Count': 'Number of Products',
+            'Condition': 'Product Condition'
+        },
+        text='Count'
+    )
+
+    # Customize the layout
+    fig.update_layout(
+        xaxis_title='Platform',
+        yaxis_title='Number of Products',
+        legend_title='Condition',
+        template='plotly_white'
+    )
+
+    # Display count labels on bars
+    fig.update_traces(textposition='outside')
+    st.plotly_chart(fig,use_container_width=True)
+
+    with col6:
+            st.subheader("Stock Health Index Across Price Tiers")
+            df["Price_Tier"] = pd.cut(
+            df["Launch_Price_USD"],
+            bins=3,
+            labels=["Budget", "Mid-Range", "Premium"]
+        )
+    
+        # Count Stock Status in each Price Tier
+    stock = (
+            df.groupby(["Price_Tier", "Stock_Status"])
+            .size()
+            .reset_index(name="Count")
+        )
+    
+        # Convert counts to percentages
+    stock["Percentage"] = (
+            stock.groupby("Price_Tier")["Count"]
+                .transform(lambda x: x / x.sum() * 100)
+        )
+    
+        # Plot 100% Stacked Bar Chart
+    fig = px.bar(
+            stock,
+            x="Price_Tier",
+            y="Percentage",
+            color="Stock_Status",
+            text=stock["Percentage"].round(1).astype(str) + "%",
+            title="Stock Health Index Across Price Tiers",
+            labels={
+                "Price_Tier": "Price Tier",
+                "Percentage": "Percentage (%)",
+                "Stock_Status": "Stock Status"
+            }
+        )
+    
+    fig.update_layout(
+            barmode="stack",
+            template="plotly_white",
+            yaxis_title="Percentage (%)",
+            xaxis_title="Price Tier"
+        )
+    
+    st.plotly_chart(fig,use_container_width=True)
+    with tab3:
+        st.subheader("🚀 Advanced Charts")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("Discount Percentage vs Rating")
+                
+        fig = px.scatter(
+            df,
+            x='Product_Category',
+            y='Rating',
+            color='Product_Category',
+            size_max=12,
+            opacity=0.75,
+            color_discrete_sequence=px.colors.qualitative.Vivid,
+            template='plotly_white',
+            hover_data={'Discount_Pct': ':.1f', 'Rating': ':.2f'}
+        )
+
+        fig.update_traces(
+            marker=dict(
+                size=10,
+                line=dict(width=0.8, color='white')
+            )
+        )
+
+        fig.update_layout(
+            title=dict(
+                text="<b>Discount Percentage vs Rating</b>",
+                x=0.5,
+                xanchor='center',
+                font=dict(size=22, family='Arial', color='#2c3e50')
+            ),
+            xaxis_title="Discount Percentage (%)",
+            yaxis_title="Rating",
+            font=dict(family='Arial', size=13, color='#2c3e50'),
+            legend_title_text='Product Category',
+            legend=dict(
+                bgcolor='rgba(255,255,255,0.8)',
+                bordercolor='lightgray',
+                borderwidth=1
+            ),
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            xaxis=dict(showgrid=True, gridcolor='#eeeeee', zeroline=False),
+            yaxis=dict(showgrid=True, gridcolor='#eeeeee', zeroline=False),
+            margin=dict(l=60, r=40, t=80, b=60)
+        )
+        st.plotly_chart(fig,use_container_width=True)
+
+        with col2:
+            st.subheader("Bubble Chart: Multi-Currency Valuation Discrepancie")
+            fig = px.scatter(
+        df,
+        x="Launch_Price_USD",
+        y="Launch_Price_INR",
+        size="Reviews_Count",
+        color="Product_Category",
+        hover_name="Product_Category",
+        title="Bubble Chart: Multi-Currency Valuation Discrepancies",
+        labels={
+            "Launch_Price_USD": "Launch Price (USD)",
+            "Launch_Price_INR": "Launch Price (INR)",
+            "Reviews_Count": "Reviews Count"
+        },
+        size_max=50
+        )
+
+        fig.update_layout(
+            xaxis_title="Launch Price (USD)",
+            yaxis_title="Launch Price (INR)",
+            template="plotly_white"
+        )
+        st.plotly_chart(fig,use_container_width=True)
+
+        col3, col4 = st.columns(2)
+        with col3:
+            st.subheader("Correlation Heatmap")
+            corr = df.corr(numeric_only=True)
+
+        fig = px.imshow(
+            corr,
+            text_auto=".2f",
+            color_continuous_scale="magma",
+            aspect="auto",
+            title="<b>Correlation Heatmap</b>",
+            labels=dict(color="Correlation")
+        )
+        st.plotly_chart(fig,use_container_width=True)
+
+        with col4:
+            st.subheader("Launch price spread across product category")
+            fig = px.sunburst(
+            df,
+            path=["Product_Category", "Launch_Price_USD"],
+            title="Launch price spread across product category",
+            color="Product_Category",
+            color_discrete_map={
+                "Low":'#FF6B6B',
+                "Medium":'#FFD166',
+                'High':'#06D6A0'
+            }
+        )
+
+        fig.update_layout(
+            template="plotly_dark",
+            title_x=0.5,
+            height=550
+        )
+        fig.update_traces(
+            textinfo="label+percent parent",
+            marker=dict(line=dict(color="white", width=2))
+        )
+        st.plotly_chart(fig,use_container_width=True)
+
+        col5, col6 = st.columns(2)
+        with col5:
+            st.subheader(" distribution ot platform")
+            data= df['Platform'].value_counts().reset_index()
+        print(data)
+        fig= px.pie(
+            data,
+            labels="Product_Category",
+            values="count",
+            hole=0.5,
+
+        )
+        fig.update_traces(
+            textinfo="label+value+percent"
+        )
+        st.plotly_chart(fig,use_container_width=True)
+
+        with col6:
+            st.subheader("Apple Product Catalog Asset Distribution")
+
+            fig = px.treemap(
+                df,
+                path=["Product_Category", "Model_Name"],
+                values="Current_Price_USD",
+                title="Apple Product Catalog Asset Distribution",
+                color="Product_Category",
+                color_discrete_sequence=px.colors.qualitative.Bold
+            )
+
+            fig.update_layout(
+                title_x=0.5,
+                plot_bgcolor="black",
+                paper_bgcolor="black",
+                font=dict(size=17, color="white"),
+                width=950,
+                height=630,
+                margin=dict(t=80, l=20, r=20, b=20)
+            )
+
+            fig.update_traces(
+                marker=dict(
+                    line=dict(color="black", width=2)
+                ),
+                texttemplate="%{label}<br>$%{value:,.0f}<br>%{percentParent:.1%}",
+                hovertemplate="<b>%{label}</b><br>Price: $%{value:,.2f}<extra></extra>"
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+elif page == "About":
+
+    st.title("🍎 About Apple Products Pricing Dashboard")
+
+    st.write(
+        "This dashboard analyzes Apple product pricing data from 2020 to 2026 "
+        "using interactive charts and data visualizations."
+    )
+
+    # Create tabs
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "📌 Overview",
+        "📊 Dataset",
+        "⚙️ Features",
+        "🔬 Methodology",
+        "💡 Insights"
+    ])
+
+    # ---------------- TAB 1 ----------------
+    with tab1:
+        st.header("📌 Project Overview")
+
+        st.markdown("""
+        ### Apple Products Pricing Analysis
+
+        This project analyzes Apple product pricing trends from *2020–2026*.
+
+        The dashboard helps users understand:
+
+        - 💰 Product prices
+        - 📱 Product categories
+        - 📅 Pricing trends over time
+        - ⭐ Customer ratings
+        - 📝 Number of reviews
+        - 📦 Product conditions
+        - 🏪 Platform and stock status
+        """)
+
+    # ---------------- TAB 2 ----------------
+    with tab2:
+        st.header("📊 Dataset Information")
+
+        st.markdown("""
+        ### Dataset: Apple Products Pricing 2020–2026
+
+        The dataset contains information about Apple products,
+        their prices, ratings, reviews and product conditions.
+
+        *Important columns include:*
+
+        - Date
+        - Product_Category
+        - Model_Name
+        - Launch_Price_USD
+        - Launch_Price_INR
+        - Current_Price_USD
+        - Current_Price_INR
+        - Rating
+        - Reviews_Count
+        - Condition
+        - Platform
+        - Stock_Status
+        """)
+
+    # ---------------- TAB 3 ----------------
+    with tab3:
+        st.header("⚙️ Dashboard Features")
+
+        st.markdown("""
+        ### Main Features
+
+        *📊 Interactive Visualizations*
+        - Pie / Donut Chart
+        - Bar Chart
+        - Line Chart
+        - Scatter Plot
+        - Box Plot
+        - Treemap
+        - Bubble Chart
+
+        *🔎 Data Exploration*
+        - Product category filter
+        - Model filter
+        - Date filter
+        - Platform filter
+        - Condition filter
+
+        *📈 Price Analysis*
+        - Launch price
+        - Current price
+        - Price changes
+        - Pricing trends
+        """)
+
+    # ---------------- TAB 4 ----------------
+    with tab4:
+        st.header("🔬 Methodology")
+
+        st.markdown("""
+        ### Data Processing
+
+        1. *Data Collection*
+           - Apple product pricing data from 2020–2026.
+
+        2. *Data Preprocessing*
+           - Handle missing values.
+           - Remove duplicate records.
+           - Convert date columns.
+           - Convert price columns to numeric values.
+
+        3. *Data Analysis*
+           - Group products by category.
+           - Calculate average prices.
+           - Analyze ratings and reviews.
+           - Study pricing trends.
+
+        4. *Visualization*
+           - Plotly is used to create interactive charts.
+           - Streamlit is used to build the dashboard.
+        """)
+
+    # ---------------- TAB 5 ----------------
+    with tab5:
+        st.header("💡 Key Insights")
+
+        st.markdown("""
+        ### What can we learn from the dataset?
+
+        - Which Apple product category has the highest prices?
+        - How have prices changed from 2020 to 2026?
+        - Which products have the highest ratings?
+        - Which products receive the most reviews?
+        - How does product condition affect price?
+        - Which platforms have more products?
+        - Which products have the highest stock availability?
+
+        These insights help understand **Apple product pricing,
+        customer engagement and market trends**.
+        """)
